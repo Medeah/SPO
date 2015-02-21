@@ -112,4 +112,6 @@ studios/
 # Triangle
 tools-2.1/
 
+gen/
+
 *.pdf
