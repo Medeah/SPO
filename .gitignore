@@ -105,4 +105,11 @@ hs_err_pid*
 *.x86_64
 *.hex
 
+# Crafting a Compiler studios
+# http://www.cs.wustl.edu/~cytron/cacweb/
+studios/
+
+# Triangle
+tools-2.1/
+
 *.pdf

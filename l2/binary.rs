@@ -7,14 +7,14 @@ fn main() {
 
 fn binary_search_rec(a: &[i32], value: i32, low: usize , high: usize) -> i32 {
       println!("{}{}", low, high);
-      if high < low{
+      if high < low {
           return -1
       }
       let mid = (low + high) / 2;
-      if a[mid] > value{
+      if a[mid] > value {
           return binary_search_rec(a, value, low, mid-1);
       }
-      else if a[mid] < value{
+      else if a[mid] < value {
           return binary_search_rec(a, value, mid+1, high);
       }
       else{
