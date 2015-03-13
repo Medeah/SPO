@@ -112,7 +112,24 @@ studios/
 # Triangle
 tools-2.1/
 
+# mantra
+mantra/
+
 # ANTLR generated
 gen/
+generated-src/
 
 *.pdf
+
+# Created by https://www.gitignore.io
+
+### Gradle ###
+.gradle
+build/
+
+# Ignore Gradle GUI config
+gradle-app.setting
+
+# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
+!gradle-wrapper.jar
+
