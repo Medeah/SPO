@@ -10,7 +10,7 @@ public class TypeVisitor extends AcBaseVisitor<Void> {
 
     private void convert(AcParser.ExprContext c, Type t) {
         if (c.type == Type.FLOAT && t == Type.INT) {
-            Main.error("Cannot convert float to int");
+            Main.error("cannot convert float expression to int", c);
         } else if (c.type == Type.INT && t == Type.FLOAT) {
             c.convert2float = true;
         }

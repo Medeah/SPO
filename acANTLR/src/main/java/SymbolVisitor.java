@@ -11,17 +11,12 @@ public class SymbolVisitor extends AcBaseVisitor<Void> {
 
     public Void visitDcl(AcParser.DclContext ctx) {
         Type t = Type.INT;
-        String type = ctx.children.get(0).toString();
-        if (type.compareTo("f") == 0) {
+        if (ctx.getChild(0).getText().equals("f")) {
             t = Type.FLOAT;
-        } else if (type.compareTo("i") == 0) {
-            t = Type.INT;
-        } else {
-            Main.error("hmm");
         }
         String sym = ctx.Id().getSymbol().getText();
         if (symbolTable.containsKey(sym)) {
-            Main.error("duplicate declaration");
+            Main.error("redeclaration of '" + sym + "'", ctx.Id().getSymbol());
         }
         symbolTable.put(sym, t);
         return null;
@@ -29,7 +24,7 @@ public class SymbolVisitor extends AcBaseVisitor<Void> {
 
     public Void visitSymref(AcParser.SymrefContext ctx) {
         if (!symbolTable.containsKey(ctx.Id().getSymbol().getText())) {
-            Main.error("not defined: " + ctx.Id().getSymbol().getText());
+            Main.error("symbol not defined: " + ctx.Id().getSymbol().getText(), ctx.Id().getSymbol());
         }
 
         return null;
@@ -37,7 +32,7 @@ public class SymbolVisitor extends AcBaseVisitor<Void> {
 
     public Void visitAssign(AcParser.AssignContext ctx) {
         if (!symbolTable.containsKey(ctx.Id().getSymbol().getText())) {
-            Main.error("not defined: " + ctx.Id().getSymbol().getText());
+            Main.error("symbol not defined: " + ctx.Id().getSymbol().getText(), ctx.Id().getSymbol());
         }
 
         ctx.expr().accept(this);
