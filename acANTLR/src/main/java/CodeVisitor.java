@@ -24,9 +24,6 @@ public class CodeVisitor extends AcBaseVisitor<Void> {
         if (ctx.convert2float) {
             emit("5 k");
         }
-        if (ctx.convert2float) {
-            emit("5 k");
-        }
 
         return null;
     }
