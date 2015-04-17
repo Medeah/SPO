@@ -1,6 +1,6 @@
 import java.util.Map;
 
-public class TypeVisitor extends AcBaseVisitor<Type> {
+public class TypeVisitor extends AcBaseVisitor<Void> {
 
     public TypeVisitor(Map<String, Type> symbolTable) {
         this.symbolTable = symbolTable;
@@ -8,11 +8,12 @@ public class TypeVisitor extends AcBaseVisitor<Type> {
 
     private Map<String, Type> symbolTable;
 
-    private Type convert(Type t1, Type t2) {
-        if (t1 == Type.FLOAT && t2 == Type.INT) {
-            Main.error("cannot convert float to int");
+    private void convert(AcParser.ExprContext c, Type t) {
+        if (c.type == Type.FLOAT && t == Type.INT) {
+            Main.error("Cannot convert float to int");
+        } else if (c.type == Type.INT && t == Type.FLOAT) {
+            c.convert2float = true;
         }
-        return t2;
     }
 
     private Type generalize(Type t1, Type t2) {
@@ -23,61 +24,41 @@ public class TypeVisitor extends AcBaseVisitor<Type> {
         }
     }
 
-    /**
-     * Visit a parse tree produced by the {@code assign}
-     * labeled alternative in {@link AcParser#stmt}.
-     *
-     * @param ctx the parse tree
-     * @return the visitor result
-     */
-    public Type visitAssign(AcParser.AssignContext ctx) {
+    private Type consistent(AcParser.ExprContext c1, AcParser.ExprContext c2) {
+        Type m = generalize(c1.type, c2.type);
+        convert(c1, m);
+        convert(c2, m);
+        return m;
+    }
+
+    public Void visitAssign(AcParser.AssignContext ctx) {
         Type id = symbolTable.get(ctx.Id().getText());
-        Type ex = ctx.expr().accept(this);
+        ctx.expr().accept(this);
+        convert(ctx.expr(), id);
 
-        return convert(ex, id);
+        //ctx.type = assign node properly does not need type
+        return null;
     }
 
-    /**
-     * Visit a parse tree produced by the {@code floatcon}
-     * labeled alternative in {@link AcParser#expr}.
-     *
-     * @param ctx the parse tree
-     * @return the visitor result
-     */
-    public Type visitFloatcon(AcParser.FloatconContext ctx) {
-        return Type.FLOAT;
+    public Void visitFloatcon(AcParser.FloatconContext ctx) {
+        ctx.type = Type.FLOAT;
+        return null;
     }
 
-    /**
-     * Visit a parse tree produced by the {@code intcon}
-     * labeled alternative in {@link AcParser#expr}.
-     *
-     * @param ctx the parse tree
-     * @return the visitor result
-     */
-    public Type visitIntcon(AcParser.IntconContext ctx) {
-        return Type.INT;
+    public Void visitIntcon(AcParser.IntconContext ctx) {
+        ctx.type = Type.INT;
+        return null;
     }
 
-    /**
-     * Visit a parse tree produced by the {@code symref}
-     * labeled alternative in {@link AcParser#expr}.
-     *
-     * @param ctx the parse tree
-     * @return the visitor result
-     */
-    public Type visitSymref(AcParser.SymrefContext ctx) {
-        return symbolTable.get(ctx.Id().getSymbol().getText());
+    public Void visitSymref(AcParser.SymrefContext ctx) {
+        ctx.type = symbolTable.get(ctx.Id().getSymbol().getText());
+        return null;
     }
 
-    /**
-     * Visit a parse tree produced by the {@code computing}
-     * labeled alternative in {@link AcParser#expr}.
-     *
-     * @param ctx the parse tree
-     * @return the visitor result
-     */
-    public Type visitComputing(AcParser.ComputingContext ctx) {
-        return generalize(ctx.expr(0).accept(this), ctx.expr(1).accept(this));
+    public Void visitComputing(AcParser.ComputingContext ctx) {
+        ctx.expr(0).accept(this);
+        ctx.expr(1).accept(this);
+        ctx.type = consistent(ctx.expr(0), ctx.expr(1));
+        return null;
     }
 }

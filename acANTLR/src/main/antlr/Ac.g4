@@ -1,20 +1,26 @@
 grammar Ac;
 
-prog : dcl* stmt* EOF ;
+prog
+    : dcl* stmt* EOF ;
 
-dcl : 'f' Id
+dcl
+    : 'f' Id
     | 'i' Id
     ;
 
-stmt : Id '=' expr          # assign
-     | 'p' Id               # print
-     ;
+stmt
+locals [Type type]
+    : Id '=' expr          # assign
+    | 'p' Id               # print
+    ;
 
-expr : expr ('+'|'-') expr  # computing
-     | Id                   # symref
-     | Inum                 # intcon
-     | Fnum                 # floatcon
-     ;
+expr
+locals [Type type, boolean convert2float]
+    : expr op=('+'|'-') expr    # computing
+    | Id                        # symref
+    | Inum                      # intcon
+    | Fnum                      # floatcon
+    ;
 
 
 Id : [a-e] | [g-h] | [j-o] | [q-z] ;

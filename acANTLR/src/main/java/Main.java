@@ -1,4 +1,3 @@
-import com.sun.org.apache.bcel.internal.classfile.Code;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 
@@ -20,7 +19,10 @@ public class Main {
         AcLexer lexer = new AcLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         AcParser parser = new AcParser(tokens);
-        ParseTree tree = parser.prog(); // parse
+        ParseTree tree = parser.prog();
+        if (parser.getNumberOfSyntaxErrors() > 0) {
+            System.exit(1);
+        }
 
         Map<String, Type> symbolTable = new HashMap<String, Type>();
         SymbolVisitor sym = new SymbolVisitor(symbolTable);
@@ -37,6 +39,6 @@ public class Main {
 
     public static void error(String mes) {
         System.out.println(mes);
-        System.exit(-1);
+        System.exit(1);
     }
 }

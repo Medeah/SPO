@@ -6,6 +6,7 @@ public class CodeVisitor extends AcBaseVisitor<Void> {
     public Void visitAssign(AcParser.AssignContext ctx) {
         ctx.expr().accept(this);
         emit("s" + ctx.Id().getText());
+        emit("0 k");
 
         return null;
     }
@@ -20,18 +21,30 @@ public class CodeVisitor extends AcBaseVisitor<Void> {
 
     public Void visitFloatcon(AcParser.FloatconContext ctx) {
         emit(ctx.Fnum().getText());
+        if (ctx.convert2float) {
+            emit("5 k");
+        }
+        if (ctx.convert2float) {
+            emit("5 k");
+        }
 
         return null;
     }
 
     public Void visitSymref(AcParser.SymrefContext ctx) {
         emit("l" + ctx.Id().getText());
+        if (ctx.convert2float) {
+            emit("5 k");
+        }
 
         return null;
     }
 
     public Void visitIntcon(AcParser.IntconContext ctx) {
         emit(ctx.getText());
+        if (ctx.convert2float) {
+            emit("5 k");
+        }
 
         return null;
     }
@@ -39,7 +52,10 @@ public class CodeVisitor extends AcBaseVisitor<Void> {
     public Void visitComputing(AcParser.ComputingContext ctx) {
         ctx.expr(0).accept(this);
         ctx.expr(1).accept(this);
-        emit(ctx.getChild(1).getText());
+        emit(ctx.op.getText());
+        if (ctx.convert2float) {
+            emit("5 k");
+        }
 
         return null;
     }
